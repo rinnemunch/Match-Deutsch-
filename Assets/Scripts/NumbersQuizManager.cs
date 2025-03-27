@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using System.Collections;
 
 public class NumbersQuizManager : MonoBehaviour
 {
@@ -36,23 +37,32 @@ public class NumbersQuizManager : MonoBehaviour
 
         for (int i = 0; i < answerButtons.Length; i++)
         {
-            // Set the button's text
             TextMeshProUGUI tmp = answerButtons[i].GetComponentInChildren<TextMeshProUGUI>();
             tmp.text = item.options[i];
 
             string selectedAnswer = item.options[i];
 
-            // Setup click behavior
-            answerButtons[i].onClick.RemoveAllListeners();
-            answerButtons[i].onClick.AddListener(() => CheckAnswer(selectedAnswer));
+            Button btn = answerButtons[i];
+            btn.onClick.RemoveAllListeners();
+            btn.onClick.AddListener(() =>
+            {
+                StartCoroutine(CheckAnswer(btn, selectedAnswer));
+            });
         }
     }
 
-    void CheckAnswer(string selected)
+    IEnumerator CheckAnswer(Button clickedButton, string selected)
     {
-        Debug.Log("You clicked: " + selected);
+        var item = quizItems[currentQuestion];
+        bool isCorrect = selected == item.correctAnswer;
 
-        if (selected == quizItems[currentQuestion].correctAnswer)
+        // Flash color (green if correct, red if wrong)
+        Color original = clickedButton.image.color;
+        clickedButton.image.color = isCorrect ? Color.green : Color.red;
+        yield return new WaitForSeconds(0.3f);
+        clickedButton.image.color = original;
+
+        if (isCorrect)
         {
             currentQuestion++;
             ShowQuestion();

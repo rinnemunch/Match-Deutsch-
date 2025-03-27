@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using System.Collections;
 
 public class ColorQuizManager : MonoBehaviour
 {
@@ -33,7 +34,6 @@ public class ColorQuizManager : MonoBehaviour
 
         QuizItem item = quizItems[currentQuestion];
 
-        // Force alpha to 1 (fully visible)
         Color visibleColor = item.color;
         visibleColor.a = 1f;
         colorBox.color = visibleColor;
@@ -43,21 +43,30 @@ public class ColorQuizManager : MonoBehaviour
             if (i < item.options.Length)
             {
                 answerButtons[i].text = item.options[i];
-
-                // Capture loop variable safely
                 string selectedAnswer = item.options[i];
 
-                // Reset button listener
                 Button btn = answerButtons[i].GetComponentInParent<Button>();
                 btn.onClick.RemoveAllListeners();
-                btn.onClick.AddListener(() => CheckAnswer(selectedAnswer));
+                btn.onClick.AddListener(() =>
+                {
+                    StartCoroutine(CheckAnswer(btn, selectedAnswer));
+                });
             }
         }
     }
 
-    void CheckAnswer(string selected)
+    IEnumerator CheckAnswer(Button clickedButton, string selected)
     {
-        if (selected == quizItems[currentQuestion].correctAnswer)
+        var item = quizItems[currentQuestion];
+        bool isCorrect = selected == item.correctAnswer;
+
+        // Flash feedback
+        Color original = clickedButton.image.color;
+        clickedButton.image.color = isCorrect ? Color.green : Color.red;
+        yield return new WaitForSeconds(0.3f);
+        clickedButton.image.color = original;
+
+        if (isCorrect)
         {
             currentQuestion++;
             ShowQuestion();
