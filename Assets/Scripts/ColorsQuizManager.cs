@@ -13,6 +13,7 @@ public class ColorQuizManager : MonoBehaviour
         public string[] options;
     }
 
+    public GameObject winPanel;
     public Image colorBox;
     public TextMeshProUGUI[] answerButtons;
 
@@ -21,6 +22,7 @@ public class ColorQuizManager : MonoBehaviour
 
     void Start()
     {
+        winPanel.SetActive(false); // Hide win panel at start
         ShowQuestion();
     }
 
@@ -28,7 +30,7 @@ public class ColorQuizManager : MonoBehaviour
     {
         if (currentQuestion >= quizItems.Length)
         {
-            Debug.Log("Quiz Complete!");
+            winPanel.SetActive(true);
             return;
         }
 

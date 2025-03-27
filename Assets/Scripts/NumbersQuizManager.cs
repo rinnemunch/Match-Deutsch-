@@ -16,11 +16,13 @@ public class NumbersQuizManager : MonoBehaviour
     public TextMeshProUGUI numberDisplay;
     public Button[] answerButtons;
     public QuizItem[] quizItems;
+    public GameObject winPanel;
 
     private int currentQuestion = 0;
 
     void Start()
     {
+        winPanel.SetActive(false); // Hide the win panel at start
         ShowQuestion();
     }
 
@@ -28,7 +30,7 @@ public class NumbersQuizManager : MonoBehaviour
     {
         if (currentQuestion >= quizItems.Length)
         {
-            Debug.Log("Quiz Complete!");
+            winPanel.SetActive(true);
             return;
         }
 
