@@ -13,9 +13,9 @@ public class NumbersQuizManager : MonoBehaviour
     }
 
     public TextMeshProUGUI numberDisplay;
-    public TextMeshProUGUI[] answerButtons;
-
+    public Button[] answerButtons;
     public QuizItem[] quizItems;
+
     private int currentQuestion = 0;
 
     void Start()
@@ -36,18 +36,22 @@ public class NumbersQuizManager : MonoBehaviour
 
         for (int i = 0; i < answerButtons.Length; i++)
         {
-            answerButtons[i].text = item.options[i];
+            // Set the button's text
+            TextMeshProUGUI tmp = answerButtons[i].GetComponentInChildren<TextMeshProUGUI>();
+            tmp.text = item.options[i];
 
             string selectedAnswer = item.options[i];
 
-            Button btn = answerButtons[i].GetComponentInParent<Button>();
-            btn.onClick.RemoveAllListeners();
-            btn.onClick.AddListener(() => CheckAnswer(selectedAnswer));
+            // Setup click behavior
+            answerButtons[i].onClick.RemoveAllListeners();
+            answerButtons[i].onClick.AddListener(() => CheckAnswer(selectedAnswer));
         }
     }
 
     void CheckAnswer(string selected)
     {
+        Debug.Log("You clicked: " + selected);
+
         if (selected == quizItems[currentQuestion].correctAnswer)
         {
             currentQuestion++;
