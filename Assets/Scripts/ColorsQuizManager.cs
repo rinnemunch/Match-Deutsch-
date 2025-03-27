@@ -25,19 +25,33 @@ public class ColorQuizManager : MonoBehaviour
 
     void ShowQuestion()
     {
-        var item = quizItems[currentQuestion];
-        colorBox.color = item.color;
+        if (currentQuestion >= quizItems.Length)
+        {
+            Debug.Log("Quiz Complete!");
+            return;
+        }
+
+        QuizItem item = quizItems[currentQuestion];
+
+        // Force alpha to 1 (fully visible)
+        Color visibleColor = item.color;
+        visibleColor.a = 1f;
+        colorBox.color = visibleColor;
 
         for (int i = 0; i < answerButtons.Length; i++)
         {
-            answerButtons[i].text = item.options[i];
-
-            string selectedAnswer = item.options[i];
-            answerButtons[i].GetComponentInParent<Button>().onClick.RemoveAllListeners();
-            answerButtons[i].GetComponentInParent<Button>().onClick.AddListener(() =>
+            if (i < item.options.Length)
             {
-                CheckAnswer(selectedAnswer);
-            });
+                answerButtons[i].text = item.options[i];
+
+                // Capture loop variable safely
+                string selectedAnswer = item.options[i];
+
+                // Reset button listener
+                Button btn = answerButtons[i].GetComponentInParent<Button>();
+                btn.onClick.RemoveAllListeners();
+                btn.onClick.AddListener(() => CheckAnswer(selectedAnswer));
+            }
         }
     }
 
@@ -46,11 +60,7 @@ public class ColorQuizManager : MonoBehaviour
         if (selected == quizItems[currentQuestion].correctAnswer)
         {
             currentQuestion++;
-
-            if (currentQuestion < quizItems.Length)
-                ShowQuestion();
-            else
-                Debug.Log("Quiz Complete!");
+            ShowQuestion();
         }
         else
         {
