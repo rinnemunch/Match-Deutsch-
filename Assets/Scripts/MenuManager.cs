@@ -1,15 +1,22 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using System.Collections;
 
 public class MenuManager : MonoBehaviour
 {
     public void LoadColorsLevel()
     {
-        SceneManager.LoadScene("ColorsLevel");
+        StartCoroutine(DelayedLoad("ColorsLevel"));
     }
 
     public void LoadNumbersLevel()
     {
-        SceneManager.LoadScene("NumbersLevel");
+        StartCoroutine(DelayedLoad("NumbersLevel"));
+    }
+
+    IEnumerator DelayedLoad(string sceneName)
+    {
+        yield return new WaitForSeconds(0.5f); // gives sound time to play
+        SceneManager.LoadScene(sceneName);
     }
 }
