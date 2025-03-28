@@ -17,12 +17,23 @@ public class ColorQuizManager : MonoBehaviour
     public Image colorBox;
     public TextMeshProUGUI[] answerButtons;
 
+    [Header("Audio")]
+    public AudioSource audioSource;
+    public AudioClip[] audioClips;
+    public string[] clipNames;
+
     public QuizItem[] quizItems;
     private int currentQuestion = 0;
 
-    void Start()
+    void OnEnable()
     {
-        winPanel.SetActive(false); // Hide win panel at start
+        StartCoroutine(Init());
+    }
+
+    IEnumerator Init()
+    {
+        winPanel.SetActive(false);
+        yield return new WaitForSeconds(0.05f); // Give Unity a frame to initialize audio
         ShowQuestion();
     }
 
@@ -55,6 +66,30 @@ public class ColorQuizManager : MonoBehaviour
                 });
             }
         }
+
+        // Play voice clip after short delay
+        StartCoroutine(PlayAudioDelayed(item.correctAnswer));
+    }
+
+    IEnumerator PlayAudioDelayed(string word)
+    {
+        yield return new WaitForSeconds(0.1f);
+        PlayAudio(word);
+    }
+
+    void PlayAudio(string word)
+    {
+        for (int i = 0; i < clipNames.Length; i++)
+        {
+            if (clipNames[i].ToLower() == word.ToLower())
+            {
+                audioSource.clip = audioClips[i];
+                audioSource.Play();
+                return;
+            }
+        }
+
+        Debug.LogWarning("No audio clip found for: " + word);
     }
 
     IEnumerator CheckAnswer(Button clickedButton, string selected)
@@ -62,7 +97,6 @@ public class ColorQuizManager : MonoBehaviour
         var item = quizItems[currentQuestion];
         bool isCorrect = selected == item.correctAnswer;
 
-        // Flash feedback
         Color original = clickedButton.image.color;
         clickedButton.image.color = isCorrect ? Color.green : Color.red;
         yield return new WaitForSeconds(0.3f);

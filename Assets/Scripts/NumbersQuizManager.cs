@@ -18,11 +18,16 @@ public class NumbersQuizManager : MonoBehaviour
     public QuizItem[] quizItems;
     public GameObject winPanel;
 
+    [Header("Audio")]
+    public AudioSource audioSource;
+    public AudioClip[] audioClips;
+    public string[] clipNames; // Must match correctAnswer text exactly (e.g., "Eins", "Zwei")
+
     private int currentQuestion = 0;
 
     void Start()
     {
-        winPanel.SetActive(false); // Hide the win panel at start
+        winPanel.SetActive(false);
         ShowQuestion();
     }
 
@@ -51,6 +56,24 @@ public class NumbersQuizManager : MonoBehaviour
                 StartCoroutine(CheckAnswer(btn, selectedAnswer));
             });
         }
+
+        // Play German audio for this question
+        PlayAudio(item.correctAnswer);
+    }
+
+    void PlayAudio(string word)
+    {
+        for (int i = 0; i < clipNames.Length; i++)
+        {
+            if (clipNames[i].ToLower() == word.ToLower())
+            {
+                audioSource.clip = audioClips[i];
+                audioSource.Play();
+                return;
+            }
+        }
+
+        Debug.LogWarning("No audio found for: " + word);
     }
 
     IEnumerator CheckAnswer(Button clickedButton, string selected)
@@ -58,7 +81,6 @@ public class NumbersQuizManager : MonoBehaviour
         var item = quizItems[currentQuestion];
         bool isCorrect = selected == item.correctAnswer;
 
-        // Flash color (green if correct, red if wrong)
         Color original = clickedButton.image.color;
         clickedButton.image.color = isCorrect ? Color.green : Color.red;
         yield return new WaitForSeconds(0.3f);
