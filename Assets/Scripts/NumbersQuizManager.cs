@@ -8,8 +8,8 @@ public class NumbersQuizManager : MonoBehaviour
     [System.Serializable]
     public class QuizItem
     {
-        public string numberText; // "1", "2", etc.
-        public string correctAnswer; // "Eins", "Zwei", etc.
+        public string numberText;
+        public string correctAnswer;
         public string[] options;
     }
 
@@ -21,13 +21,19 @@ public class NumbersQuizManager : MonoBehaviour
     [Header("Audio")]
     public AudioSource audioSource;
     public AudioClip[] audioClips;
-    public string[] clipNames; // Must match correctAnswer text exactly (e.g., "Eins", "Zwei")
+    public string[] clipNames;
 
     private int currentQuestion = 0;
 
-    void Start()
+    void OnEnable()
+    {
+        StartCoroutine(Init());
+    }
+
+    IEnumerator Init()
     {
         winPanel.SetActive(false);
+        yield return new WaitForSeconds(0.05f);
         ShowQuestion();
     }
 
@@ -57,8 +63,13 @@ public class NumbersQuizManager : MonoBehaviour
             });
         }
 
-        // Play German audio for this question
-        PlayAudio(item.correctAnswer);
+        StartCoroutine(PlayAudioDelayed(item.correctAnswer));
+    }
+
+    IEnumerator PlayAudioDelayed(string word)
+    {
+        yield return new WaitForSeconds(0.1f);
+        PlayAudio(word);
     }
 
     void PlayAudio(string word)
@@ -73,7 +84,7 @@ public class NumbersQuizManager : MonoBehaviour
             }
         }
 
-        Debug.LogWarning("No audio found for: " + word);
+        Debug.LogWarning("No audio clip found for: " + word);
     }
 
     IEnumerator CheckAnswer(Button clickedButton, string selected)
