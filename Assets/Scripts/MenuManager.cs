@@ -14,6 +14,12 @@ public class MenuManager : MonoBehaviour
         StartCoroutine(DelayedLoad("NumbersLevel"));
     }
 
+    public void LoadShapesLevel()
+    {
+        StartCoroutine(DelayedLoad("ShapesLevel"));
+    }
+
+
     IEnumerator DelayedLoad(string sceneName)
     {
         yield return new WaitForSeconds(0.5f); // gives sound time to play
