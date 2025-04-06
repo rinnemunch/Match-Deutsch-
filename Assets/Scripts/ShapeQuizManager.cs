@@ -24,6 +24,7 @@ public class ShapeQuizManager : MonoBehaviour
 
     public QuizItem[] quizItems;
     private int currentQuestion = 0;
+    private int correctAnswers = 0;
 
     void OnEnable()
     {
@@ -33,6 +34,7 @@ public class ShapeQuizManager : MonoBehaviour
     IEnumerator Init()
     {
         winPanel.SetActive(false);
+        correctAnswers = 0;
         yield return new WaitForSeconds(0.05f);
         ShowQuestion();
     }
@@ -41,7 +43,7 @@ public class ShapeQuizManager : MonoBehaviour
     {
         if (currentQuestion >= quizItems.Length)
         {
-            winPanel.SetActive(true);
+            ShowWinScreen();
             return;
         }
 
@@ -53,7 +55,7 @@ public class ShapeQuizManager : MonoBehaviour
             if (i < item.options.Length)
             {
                 answerButtons[i].text = item.options[i];
-                string selectedAnswer = item.options[i]; // local copy
+                string selectedAnswer = item.options[i];
 
                 Button btn = answerButtons[i].GetComponentInParent<Button>();
                 btn.onClick.RemoveAllListeners();
@@ -103,12 +105,75 @@ public class ShapeQuizManager : MonoBehaviour
 
         if (isCorrect)
         {
-            currentQuestion++;
-            ShowQuestion();
+            correctAnswers++;
+        }
+
+        currentQuestion++;
+        ShowQuestion();
+    }
+
+    void ShowWinScreen()
+    {
+        winPanel.SetActive(true);
+
+        TextMeshProUGUI winText = winPanel.GetComponentInChildren<TextMeshProUGUI>();
+
+        if (correctAnswers == quizItems.Length)
+        {
+            winText.text = "Sehr gut! Du hast alle richtig!";
+            winText.fontSize = 48;
+            winText.alignment = TextAlignmentOptions.Center;
+            winText.color = new Color32(255, 223, 0, 255); // gold
+            winText.transform.localScale = Vector3.one * 0.5f;
+
+            // Pop animation
+            StartCoroutine(PopText(winText.transform));
+
+            // Confetti
+            Transform confetti = winPanel.transform.Find("Confetti");
+            if (confetti != null)
+            {
+                confetti.gameObject.SetActive(true);
+                var ps = confetti.GetComponent<ParticleSystem>();
+                if (ps != null) ps.Play();
+            }
         }
         else
         {
-            Debug.Log("Wrong answer!");
+            winText.text = "You finished.";
+            winText.fontSize = 36;
+            winText.color = Color.white;
+            winText.alignment = TextAlignmentOptions.Center;
+            winText.transform.localScale = Vector3.one;
         }
+    }
+
+    IEnumerator PopText(Transform target)
+    {
+        Vector3 start = Vector3.one * 0.5f;
+        Vector3 mid = Vector3.one * 1.2f;
+        Vector3 end = Vector3.one;
+
+        float t = 0f;
+        float duration = 0.4f;
+
+        while (t < duration)
+        {
+            t += Time.deltaTime;
+            float progress = t / duration;
+
+            if (progress < 0.5f)
+            {
+                target.localScale = Vector3.Lerp(start, mid, progress * 2);
+            }
+            else
+            {
+                target.localScale = Vector3.Lerp(mid, end, (progress - 0.5f) * 2);
+            }
+
+            yield return null;
+        }
+
+        target.localScale = end;
     }
 }
