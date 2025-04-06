@@ -529,14 +529,38 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   winPanel: {fileID: 1700755888}
   shapeBox: {fileID: 470830926}
-  answerButtons: []
+  answerButtons:
+  - {fileID: 2028014640}
+  - {fileID: 529080079}
+  - {fileID: 636198623}
   audioSource: {fileID: 192128561}
   audioClips:
   - {fileID: 8300000, guid: 7aceef52098b6ca4fb24cdd88c66cd37, type: 3}
   - {fileID: 8300000, guid: cf26664a978f95a458558b6e6635aa32, type: 3}
   - {fileID: 8300000, guid: a89de7887cbc0a645b4697be3cdb232b, type: 3}
-  clipNames: []
-  quizItems: []
+  clipNames:
+  - kreis
+  - dreieck
+  - quadrat
+  quizItems:
+  - shapeSprite: {fileID: -2413806693520163455, guid: eb08329275c3ea3478843c10c2d3c3e9, type: 3}
+    correctAnswer: kreis
+    options:
+    - kreis
+    - quadrat
+    - dreieck
+  - shapeSprite: {fileID: 2741225206318957235, guid: 82d0de72b0a04d540929d328bce4eb8b, type: 3}
+    correctAnswer: dreieck
+    options:
+    - Quadrat
+    - Kreis
+    - Dreieck
+  - shapeSprite: {fileID: -1063526560905200421, guid: 464461dac37b77d4ba7f5710416f6090, type: 3}
+    correctAnswer: Quadrat
+    options:
+    - Quadrat
+    - kreis
+    - dreieck
 --- !u!1 &305160767
 GameObject:
   m_ObjectHideFlags: 0
@@ -959,7 +983,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_RaycastTarget: 1
+  m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:

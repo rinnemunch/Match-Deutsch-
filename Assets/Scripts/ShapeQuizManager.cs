@@ -53,7 +53,7 @@ public class ShapeQuizManager : MonoBehaviour
             if (i < item.options.Length)
             {
                 answerButtons[i].text = item.options[i];
-                string selectedAnswer = item.options[i];
+                string selectedAnswer = item.options[i]; // local copy
 
                 Button btn = answerButtons[i].GetComponentInParent<Button>();
                 btn.onClick.RemoveAllListeners();
@@ -91,7 +91,10 @@ public class ShapeQuizManager : MonoBehaviour
     IEnumerator CheckAnswer(Button clickedButton, string selected)
     {
         var item = quizItems[currentQuestion];
-        bool isCorrect = selected == item.correctAnswer;
+        bool isCorrect = selected.ToLower() == item.correctAnswer.ToLower();
+
+        Debug.Log("Selected: " + selected + " | Correct: " + item.correctAnswer);
+        Debug.Log("Match? " + isCorrect);
 
         Color original = clickedButton.image.color;
         clickedButton.image.color = isCorrect ? Color.green : Color.red;
